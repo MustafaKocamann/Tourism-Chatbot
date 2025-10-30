@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartTour - Your Intelligent Travel Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #7e22ce 50%, #ec4899 75%, #f97316 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            height: 92vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: containerFadeIn 0.6s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes containerFadeIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .brand {
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 7px 14px;
+            border-radius: 18px;
+            border: none;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 28px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background: #fafafa;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: messageSlide 0.4s ease;
+            align-items: flex-start;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+        }
+
+        .message-content {
+            max-width: 72%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .bot-message {
+            background: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-radius: 16px 16px 16px 4px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 16px 16px 4px 16px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .welcome-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.7;
+            max-width: 560px;
+            margin: 0 auto 28px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+            padding: 14px 18px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+        }
+
+        .typing-dots span {
+            width: 7px;
+            height: 7px;
+            background: #6366f1;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+
+        .input-area {
+            padding: 22px 28px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .action-btn.plan {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .action-btn.history {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            background: #f9fafb;
+            padding: 5px;
+            border-radius: 26px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .input-container:focus-within {
+            border-color: #6366f1;
+            background: white;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 11px 16px;
+            background: transparent;
+            border: none;
+            color: #1f2937;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+
+        #sendBtn {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        #sendBtn:hover {
+            transform: scale(1.08);
+        }
+
+        .suggestions {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .suggestion-chip {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 18px;
+            color: #4b5563;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo">✈️</div>
+                <div class="brand">SmartTour</div>
+            </div>
+            <div class="header-right">
+                <button class="header-btn" onclick="requestLocation()">
+                    📍 <span id="locationText">Enable Location</span>
+                </button>
+                <button class="header-btn" onclick="showHistory()">
+                    📜 History
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="welcome-message">
+                <div class="welcome-title">🌍 Welcome to SmartTour!</div>
+                <div class="welcome-subtitle">
+                    Your AI-powered travel companion with real-time weather, flight tracking, and currency conversion. 
+                    Ask me anything about destinations, create custom travel plans, or explore the world!
+                </div>
+                <div class="suggestions">
+                    <div class="suggestion-chip" onclick="sendSuggestion('What are the best places to visit in Paris?')">
+                        🗼 Best places in Paris
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('What is the weather in Tokyo?')">
+                        🌤️ Weather in Tokyo
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Flights from IST to FCO')">
+                        ✈️ Check flights
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Convert 100 USD to EUR')">
+                        💱 Currency converter
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="avatar bot-avatar">🤖</div>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="action-buttons">
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    📄 Download PDF
+                </button>
+                <button class="action-btn plan" onclick="showPlanCreator()">
+                    🗓️ Create Plan
+                </button>
+                <button class="action-btn history" onclick="showHistory()">
+                    📜 My Plans
+                </button>
+            </div>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Ask about travel, weather, flights, or currency..." 
+                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button id="sendBtn" onclick="sendMessage()">
+                    ➤
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const chatArea = document.getElementById('chatArea');
+    const userInput = document.getElementById('userInput');
+    const typingIndicator = document.getElementById('typingIndicator');
+    let userLocation = null;
+    let userCity = "your area";
+
+    function sendSuggestion(text) {
+        userInput.value = text;
+        sendMessage();
+    }
+
+    function parseMarkdown(text) {
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+        text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+        text = text.split('\n\n').map(para => {
+            if (!para.match(/^<(h2|h3)/)) {
+                return '<p>' + para.trim() + '</p>';
+            }
+            return para;
+        }).join('\n');
+        return text;
+    }
+
+    function addMessage(content, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = `avatar ${isUser ? 'user-avatar' : 'bot-avatar'}`;
+        avatar.textContent = isUser ? '👤' : '🤖';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = `message-content ${isUser ? 'user-message' : 'bot-message'}`;
+        
+        if (isUser) {
+            messageContent.textContent = content;
+        } else {
+            messageContent.innerHTML = parseMarkdown(content);
+        }
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(messageContent);
+        chatArea.appendChild(messageDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function showTyping() {
+        typingIndicator.style.display = 'flex';
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function hideTyping() {
+        typingIndicator.style.display = 'none';
+    }
+
+    function requestLocation() {
+        if (!navigator.geolocation) {
+            alert("Geolocation not supported");
+            return;
+        }
+        
+        document.getElementById("locationText").textContent = "Detecting...";
+        
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                userLocation = {
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                };
+                document.getElementById("locationText").textContent = "Location Shared";
+                userInput.value = "What's interesting around me?";
+                await sendMessage();
+            },
+            () => {
+                document.getElementById("locationText").textContent = "Enable Location";
+                alert("Unable to get location");
+            }
+        );
+    }
+
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, true);
+        userInput.value = '';
+        showTyping();
+
+        try {
+            const requestBody = { message };
+            if (userLocation) requestBody.location = userLocation;
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(requestBody)
+            });
+
+            hideTyping();
+
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'message bot';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar bot-avatar';
+            avatar.textContent = '🤖';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content bot-message';
+            
+            botMessageDiv.appendChild(avatar);
+            botMessageDiv.appendChild(messageContent);
+            chatArea.appendChild(botMessageDiv);
+
+            let fullText = '';
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+                            if (data.token) {
+                                fullText += data.token;
+                                messageContent.textContent = fullText;
+                                chatArea.scrollTop = chatArea.scrollHeight;
+                            }
+                            if (data.done) {
+                                messageContent.innerHTML = parseMarkdown(fullText);
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+        } catch (error) {
+            hideTyping();
+            addMessage('Error: ' + error.message, false);
+        }
+    }
+
+    async function downloadPDF() {
+        const sampleData = {
+            title: "My Travel Plan",
+            city: "Rome",
+            date: "2025-11-10 to 2025-11-13",
+            plan: ["Day 1: Colosseum", "Day 2: Vatican", "Day 3: Trastevere"],
+            recommendations: ["Try Carbonara", "Visit Trevi Fountain"]
+        };
+        
+        try {
+            const response = await fetch("/generate_pdf", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(sampleData)
+            });
+            
+            if (!response.ok) throw new Error('PDF generation failed');
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "SmartTour_Plan.pdf";
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            addMessage("✅ Your travel plan has been downloaded!", false);
+        } catch (error) {
+            addMessage("❌ Sorry, couldn't generate PDF", false);
+        }
+    }
+
+    async function showPlanCreator() {
+        const city = prompt("Which city? (e.g., Paris, Rome, Tokyo)");
+        if (!city) return;
+        
+        const days = prompt("How many days? (e.g., 3, 5, 7)");
+        if (!days) return;
+        
+        addMessage(`Creating a ${days}-day plan for ${city}...`, false);
+        showTyping();
+        
+        try {
+            const response = await fetch('/create_plan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    city: city,
+                    days: parseInt(days),
+                    interests: []
+                })
+            });
+            
+            hideTyping();
+            const plan = await response.json();
+            addMessage(plan.full_text, false);
+        } catch (error) {
+            hideTyping();
+            addMessage("Error creating plan", false);
+        }
+    }
+
+    async function showHistory() {
+        try {
+            const response = await fetch('/user/history');
+            const data = await response.json();
+            
+            if (data.success && data.plans.length > 0) {
+                let historyHTML = "📜 Your Travel Plans:\n\n";
+                data.plans.forEach((plan, i) => {
+                    historyHTML += `${i+1}. ${plan.title} - ${plan.city}\n`;
+                });
+                addMessage(historyHTML, false);
+            } else {
+                addMessage("You don't have any saved plans yet!", false);
+            }
+        } catch (error) {
+            addMessage("Could not load history", false);
+        }
+    }
+
+    window.onload = () => {
+        userInput.focus();
+    };
+    </script>
+</body>
+</html>

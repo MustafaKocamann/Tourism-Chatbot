@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Travel Plan</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px; }
+        h1 { color: #4F46E5; }
+        h2 { margin-top: 20px; }
+        ul { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🌍 {{ data.title }}</h1>
+    <p><strong>Date:</strong> {{ data.date }}</p>
+    <p><strong>City:</strong> {{ data.city }}</p>
+
+    <h2>Itinerary:</h2>
+    <ul>
+        {% for item in data.plan %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Recommendations:</h2>
+    <ul>
+        {% for rec in data.recommendations %}
+            <li>{{ rec }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
